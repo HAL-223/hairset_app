@@ -13,7 +13,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $category_id = $_POST['category_id'];
   $user_id = $_SESSION['id'];
-  $picture = $_FILES['image']['name'];
+  $image = $_FILES['image']['name'];
   $body = $_POST['body'];
 
   $errors = [];
@@ -22,27 +22,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors[] = 'カテゴリーが未選択です';
   }
 
+  // var_dump($_FILES['image']);
+
+
+  if (!empty($image)) {
+    $ext = substr($image, -3);
+    if ($ext != 'jpg' && $ext != 'gif') {
+      $errors['image'] = 'type';
+    }
+  }
   // if ($picture) {
   //   $ext = substr($picture, -3);
   //   if ($ext != 'jpg' && $ext != 'git') {
   //     $errors[] = '画像アップロードに失敗しました';
   //   }
   // }
-  // if (empty($errors)) {
-  //   $image = date('YmgHis') . $_FILES['image']['name'];
-  //   move_uploaded_file($_FILES['image']['tmp_name'], 'styles/' . $image);
-  //   $_SESSION['join'] = $_POST;
-  //   $_SESSION['join']['image'] = $image;
-  // }
-  if ($picture) {
-    $ext = substr($picture, -4);
-    if ($ext == '.gif' || $ext == '.jpg' || $ext == '.png') {
-      $filePath = './style_img/' . $_FILES['name'];
-      $success = move_uploaded_file($_FILES['tmp_name'], $filePath);
-    }
-  } else {
-    $errors[] = '画像アップロードに失敗しました';
+  if (empty($errors)) {
+    $image = date('YmgHis') . $_FILES['image']['name'];
+    move_uploaded_file($_FILES['tmp_name'], 'styles/' . $image);
+    $_SESSION['join'] = $_POST;
+    $_SESSION['join']['image'] = $image;
   }
+  // if ($picture) {
+  //   $ext = substr($picture, -4);
+  //   if ($ext == '.gif' || $ext == '.jpg' || $ext == '.png') {
+  //     $filePath = './style_img/' . $_FILES['name'];
+  //     $success = move_uploaded_file($_FILES['tmp_name'], $filePath);
+  //   }
+  // } else {
+  //   $errors[] = '画像アップロードに失敗しました';
+  // }
 
   if (empty($errors)) {
     $sql = <<<SQL
@@ -70,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':body', $body, PDO::PARAM_STR);
     $stmt->execute();
   }
+
   header("Location: show.php?id={$id}");
   exit;
 }

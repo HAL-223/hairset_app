@@ -38,6 +38,7 @@ if(empty($style)) {
 }
 
 $picture = $_FILES['image']['name'];
+var_dump($user_id);
 
 if ($picture) {
   $ext = substr($picture, -4);
