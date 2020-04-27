@@ -3,6 +3,7 @@ require_once('config.php');
 require_once('functions.php');
 
 session_start();
+
 $dbh = connectDb();
 
 $sql = 'select * from categories order by id';
@@ -21,37 +22,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   if ($category_id == '') {
     $errors[] = 'カテゴリーが未選択です';
   }
-
-  // var_dump($_FILES['image']);
-
-
+  
   if (!empty($image)) {
     $ext = substr($image, -3);
     if ($ext != 'jpg' && $ext != 'gif') {
       $errors['image'] = 'type';
     }
   }
-  // if ($picture) {
-  //   $ext = substr($picture, -3);
-  //   if ($ext != 'jpg' && $ext != 'git') {
-  //     $errors[] = '画像アップロードに失敗しました';
-  //   }
-  // }
+
   if (empty($errors)) {
-    $image = date('YmgHis') . $_FILES['image']['name'];
+    $image = date('YmgHis') . $image;
     move_uploaded_file($_FILES['tmp_name'], 'styles/' . $image);
     $_SESSION['join'] = $_POST;
     $_SESSION['join']['image'] = $image;
   }
-  // if ($picture) {
-  //   $ext = substr($picture, -4);
-  //   if ($ext == '.gif' || $ext == '.jpg' || $ext == '.png') {
-  //     $filePath = './style_img/' . $_FILES['name'];
-  //     $success = move_uploaded_file($_FILES['tmp_name'], $filePath);
-  //   }
-  // } else {
-  //   $errors[] = '画像アップロードに失敗しました';
-  // }
 
   if (empty($errors)) {
     $sql = <<<SQL
@@ -75,15 +59,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindParam(':picture', $picture, PDO::PARAM_STR);
+    $stmt->bindParam(':image', $image, PDO::PARAM_STR);
     $stmt->bindParam(':body', $body, PDO::PARAM_STR);
+    
     $stmt->execute();
-  }
 
-  header("Location: show.php?id={$id}");
-  exit;
+    $id = $dbh->lastInsertId();
+    header("Location: show.php?id={$id}");
+    exit;
+  }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -154,8 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="form-group text-center">
                   <input type="submit" value="Post" class="button">
-
-                  <!-- <input type="submit" value="Post" class="btn-block"> -->
                 </div>
               </form>
             </div>
