@@ -31,23 +31,12 @@ $stmt = $dbh->prepare($sql);
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 
+var_dump($style['picture']);
+
 $style = $stmt->fetch(PDO::FETCH_ASSOC);
 if(empty($style)) {
   header('Location: show.php');
   exit;
-}
-
-$picture = $_FILES['image']['name'];
-var_dump($user_id);
-
-if ($picture) {
-  $ext = substr($picture, -4);
-  if ($ext == '.gif' || $ext == '.jpg' || $ext == '.png') {
-    $filePath = './style_img/' . $_FILES['name'];
-    $success = move_uploaded_file($_FILES['tmp_name'], $filePath);
-  } else {
-    $errors[] = '画像アップロードに失敗しました';
-  }
 }
 
 ?>
@@ -93,13 +82,11 @@ if ($picture) {
         <div class="col-md-11 col-lg-9 mx-auto mt-5">
           <p>
             <?php if ($succes) : ?>
-              <img src="<?php echo h($filePath); ?>" alt="">
+              <img src="<?php echo h($style['picture']); ?>" alt="">
             <?php else : ?>
               <?php echo ($errors);?>
             <?php endif; ?>
-            <!-- <?php echo h($style['picture']); ?> -->
           </p>
-          <h2><?php echo h($style['body']); ?></h2>
           <p>Categories : <?php echo h($style['name']); ?></p>
           <?php echo nl2br(h($style['body'])); ?>
           <br>
