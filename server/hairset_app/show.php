@@ -82,7 +82,7 @@ if(empty($style)) {
         <div class="col-md-11 col-lg-9 mx-auto mt-5">
           <p>
             <?php if ($succes) : ?>
-              <img src="<?php echo h($style['picture']); ?>" alt="">
+              <img src="<?php echo h('style_img/'.$style['picture']); ?>" alt="">
             <?php else : ?>
               <?php echo ($errors);?>
             <?php endif; ?>
