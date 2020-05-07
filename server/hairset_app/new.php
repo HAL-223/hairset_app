@@ -14,7 +14,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $category_id = $_POST['category_id'];
   $user_id = $_SESSION['id'];
-  $image = $_FILES['image']['name'];
+  $image = $_FILES['picture']['name'];
   $body = $_POST['body'];
 
   $errors = [];
@@ -23,18 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors[] = 'カテゴリーが未選択です';
   }
 
-  if ($image) {
-    $ext = substr($image, -3);
+  if ($picture) {
+    $ext = substr($picture, -3);
     if ($ext != 'jpg' && $ext != 'gif') {
       $errors[] = 'アップロード失敗';
     }
   }
 
   if (empty($errors)) {
-    $image = date('YmgHis') . $image;
-    move_uploaded_file($_FILES['image']['tmp_name'], 'style_img/' . $image);
+    $picture = date('YmgHis') . $picture;
+    move_uploaded_file($_FILES['picture']['tmp_name'], 'style_img/' . $picture);
     $_SESSION['join'] = $_POST;
-    $_SESSION['join']['image'] = $image;
+    $_SESSION['join']['picture'] = $picture;
   }
 
   if (empty($errors)) {
@@ -51,16 +51,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     (
       :category_id,
       :user_id,
-      :image,
+      :picture,
       :body
     )
     SQL;
-    
+
     $stmt = $dbh->prepare($sql);
 
     $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindParam(':picture', $image, PDO::PARAM_STR);
+    $stmt->bindParam(':picture', $picture, PDO::PARAM_STR);
     $stmt->bindParam(':body', $body, PDO::PARAM_STR);
 
     $stmt->execute();
@@ -125,33 +125,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               <?php endif; ?>
               <form action="new.php" method="post" enctype="multipart/form-data">
                 <div class=" form-group">
-                <input type="file" name="image" id="">
+                  <input type="file" name="picture" id="">
+                </div>
+                <div class="form-group">
+                  <label for="category_id">Category</label>
+                  <select name="category_id" class="form-control" required>
+                    <option value='' disabled selected>選択して下さい</option>
+                    <?php foreach ($categories as $c) : ?>
+                      <option value="<?php echo h($c['id']); ?>"><?php echo h($c['name']); ?></option>
+                    <?php endforeach; ?>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="body">Text</label>
+                  <textarea name="body" id="" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <div class="form-group text-center">
+                  <input type="submit" value="Post" class="button">
+                </div>
+              </form>
             </div>
-            <div class="form-group">
-              <label for="category_id">Category</label>
-              <select name="category_id" class="form-control" required>
-                <option value='' disabled selected>選択して下さい</option>
-                <?php foreach ($categories as $c) : ?>
-                  <option value="<?php echo h($c['id']); ?>"><?php echo h($c['name']); ?></option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="body">Text</label>
-              <textarea name="body" id="" cols="30" rows="10" class="form-control"></textarea>
-            </div>
-            <div class="form-group text-center">
-              <input type="submit" value="Post" class="button">
-            </div>
-            </form>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <footer class="footer font-small bg-dark">
-    <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
-  </footer>
+    <footer class="footer font-small bg-dark">
+      <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
+    </footer>
   </div>
 </body>
 

@@ -31,8 +31,6 @@ $stmt = $dbh->prepare($sql);
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 
-var_dump($style['picture']);
-
 $style = $stmt->fetch(PDO::FETCH_ASSOC);
 if(empty($style)) {
   header('Location: show.php');
@@ -81,11 +79,7 @@ if(empty($style)) {
       <div class="row">
         <div class="col-md-11 col-lg-9 mx-auto mt-5">
           <p>
-            <?php if ($succes) : ?>
-              <img src="<?php echo h('style_img/'.$style['picture']); ?>" alt="">
-            <?php else : ?>
-              <?php echo ($errors);?>
-            <?php endif; ?>
+            <img src="<?php echo h('style_img/'.$style['picture']); ?>" alt="">
           </p>
           <p>Categories : <?php echo h($style['name']); ?></p>
           <?php echo nl2br(h($style['body'])); ?>
