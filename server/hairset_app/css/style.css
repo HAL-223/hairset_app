@@ -1,0 +1,54 @@
+@charset "utf-8";
+
+.alert-danger {
+  list-style: none;
+}
+
+ul {
+  list-style: none;
+}
+
+ul.alert {
+  color:  red;
+}
+/* 新規記事投稿ボタン */
+.button {
+  display       : inline-block;
+  border-radius : 11%;          /* 角丸       */
+  font-size     : 18pt;        /* 文字サイズ */
+  text-align    : center;      /* 文字位置   */
+  cursor        : pointer;     /* カーソル   */
+  padding       : 4px 16px;   /* 余白       */
+  background    : rgba(153, 153, 255, 0.55);     /* 背景色     */
+  color         : #000000;     /* 文字色     */
+  line-height   : 1em;         /* 1行の高さ  */
+  transition    : .3s;         /* なめらか変化 */
+  box-shadow    : 7px 7px 13px #666666;  /* 影の設定 */
+  border        : 2px solid rgba(153, 153, 255, 0.55);    /* 枠の指定 */
+}
+.button:hover {
+  box-shadow    : none;        /* カーソル時の影消去 */
+  color         : rgba(153, 153, 255, 0.55);     /* 背景色     */
+  background    : #000000;     /* 文字色     */
+}
+
+/* ログインボタン */
+.button-b {
+  display       : inline-block;
+  border-radius : 11%;          /* 角丸       */
+  font-size     : 10pt;        /* 文字サイズ */
+  text-align    : center;      /* 文字位置   */
+  cursor        : pointer;     /* カーソル   */
+  padding       : 4px 16px;   /* 余白       */
+  background    : rgba(255, 204, 153, 0.58);     /* 背景色     */
+  color         : #663300;     /* 文字色     */
+  line-height   : 1em;         /* 1行の高さ  */
+  transition    : .3s;         /* なめらか変化 */
+  box-shadow    : 14px 14px 13px #666666;  /* 影の設定 */
+  border        : 2px solid rgba(255, 204, 153, 0.58);    /* 枠の指定 */
+}
+.button:hover {
+  box-shadow    : none;        /* カーソル時の影消去 */
+  color         : rgba(255, 204, 153, 0.58);     /* 背景色     */
+  background    : #663300;     /* 文字色     */
+}
