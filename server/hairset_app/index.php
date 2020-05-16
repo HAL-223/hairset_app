@@ -2,9 +2,39 @@
 require_once('config.php');
 require_once('functions.php');
 
-// データベース接続
-$dbh = connectDb();
 session_start();
+
+$dbh = connectDb();
+
+$sql = <<<SQL
+SELECT
+  s.*,
+  c.name,
+  u.name as user_name
+FROM
+  styles s
+LEFT JOIN
+  categories c
+ON
+  s.category_id = c.id
+LEFT JOIN
+  users u
+ON 
+  s.user_id = u.id
+ORDER BY
+  s.created_at desc
+SQL;
+
+// $sql_where = " where s.category_id = :category_id";
+
+
+// $sql_order = " order by s.created_at desc";
+// // SQL結合
+// $sql = $sql . $sql_where . $sql_order;
+
+$stmt = $dbh->prepare($sql);
+$stmt->execute();
+$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -46,6 +76,24 @@ session_start();
         </ul>
       </div>
     </nav>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10 col-md-10 col-lg-10 mx-auto">
+          <div class="row">
+            <?php foreach ($styles as $style) : ?>
+              <div class="col-md-5">
+                <div class="article">
+                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt=""></a>
+                  <p>☆:<?php echo h($style['user_name']); ?></p>
+                  <p>投稿日:<?php echo h($style['created_at']); ?></p>
+                </div>
+                <hr>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer font-small bg-dark">
       <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
