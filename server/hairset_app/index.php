@@ -8,15 +8,19 @@ $dbh = connectDb();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $keyword = $_GET['keyword'];
+  // echo $_GET['keyword'];
 
   if ($keyword == '') {
     $sql = "select * from styles";
     $stmt = $dbh->prepare($sql);
   } else {
+    echo "キーワード入力しました";
     $sql = "select * from styles where body like :keyword";
     $stmt = $dbh->prepare($sql);
-    $keyword_param = '%' . $keyword . '%';
+    $keyword_param = '\'%' . $keyword . '%\'';
     $stmt->bindParam(":keyword", $keyword_param);
+    echo $sql;
+    echo $keyword_param;
   }
   $stmt->execute();
 
