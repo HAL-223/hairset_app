@@ -6,26 +6,7 @@ session_start();
 
 $dbh = connectDb();
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-  $keyword = $_GET['keyword'];
-  // echo $_GET['keyword'];
-
-  if ($keyword == '') {
-    $sql = "select * from styles";
-    $stmt = $dbh->prepare($sql);
-  } else {
-    echo "キーワード入力しました";
-    $sql = "select * from styles where body like :keyword";
-    $stmt = $dbh->prepare($sql);
-    $keyword_param = '\'%' . $keyword . '%\'';
-    $stmt->bindParam(":keyword", $keyword_param);
-    echo $sql;
-    echo $keyword_param;
-  }
-  $stmt->execute();
-
-  $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+$keyword = $_GET['keyword'];
 
 // stylesの取得
 $sql = <<<SQL
@@ -43,13 +24,28 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
-ORDER BY
-  s.created_at desc
 SQL;
 
-$stmt = $dbh->prepare($sql);
-$stmt->execute();
-$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// 条件付加
+if(($keyword) &&
+  is_numeric($keyword)) {
+    $sql_where = " where body like :keyword";
+  } else {
+    $sql_where ="";
+  }
+// 空の場合投稿を降順
+  $sql_order = " order by s.created_at desc";
+// sqlの結合
+  $sql = $sql . $sql_where . $sql_order;
+  $stmt = $dbh->prepare($sql);
+  // キーワードが入力された場合
+  if (($keyword_param) &&
+    is_numeric($keyword_param)) {
+    $keyword_param = '\'%' . $keyword . '%\'';
+    $stmt->bindParam(":keyword", $keyword_param);
+  }
+    $stmt->execute();
+    $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
