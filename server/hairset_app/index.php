@@ -38,14 +38,17 @@ if(($keyword) &&
 // sqlの結合
   $sql = $sql . $sql_where . $sql_order;
   $stmt = $dbh->prepare($sql);
+  echo $sql_order;
   // キーワードが入力された場合
-  if (($keyword_param) &&
-    is_numeric($keyword_param)) {
+  if (($keyword) &&
+    is_numeric($keyword)) {
     $keyword_param = '\'%' . $keyword . '%\'';
     $stmt->bindParam(":keyword", $keyword_param);
   }
-    $stmt->execute();
-    $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  echo $keyword_param;
+  $stmt->execute();
+  $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 ?>
 
