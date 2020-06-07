@@ -38,7 +38,7 @@ if(($keyword) &&
 // sqlの結合
   $sql = $sql . $sql_where . $sql_order;
   $stmt = $dbh->prepare($sql);
-  echo $sql_order;
+  echo $sql_where;
   // キーワードが入力された場合
   if (($keyword) &&
     is_numeric($keyword)) {
