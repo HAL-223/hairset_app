@@ -24,31 +24,28 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
+ORDER BY
+  s.created_at desc
 SQL;
 
 // 条件付加
-if(($keyword) &&
-  is_numeric($keyword)) {
-    $sql_where = " where body like :keyword";
-  } else {
-    $sql_where ="";
-  }
-// 空の場合投稿を降順
-  $sql_order = " order by s.created_at desc";
-// sqlの結合
-  $sql = $sql . $sql_where . $sql_order;
+if ($keyword == '') {
+  $sql = "select * styles";
   $stmt = $dbh->prepare($sql);
-  echo $sql_where;
-  // キーワードが入力された場合
-  if (($keyword) &&
-    is_numeric($keyword)) {
-    $keyword_param = '\'%' . $keyword . '%\'';
-    $stmt->bindParam(":keyword", $keyword_param);
-  }
-  echo $keyword_param;
-  $stmt->execute();
-  $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+  $sql_where = " where body like :keyword";
+  $keyword_param = '\'%' . $keyword . '%\'';
+  $stmt->bindParam(":keyword", $keyword_param);
+}
 
+
+// sqlの結合
+$sql = $sql . $sql_where;
+$stmt = $dbh->prepare($sql);
+
+$stmt->execute();
+$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
 
 ?>
 
