@@ -24,24 +24,28 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
-ORDER BY
-  s.created_at desc
 SQL;
 
 // 条件付加
-if ($keyword == '') {
-  $sql = "select * styles";
-  $stmt = $dbh->prepare($sql);
+
+if (isset($keyword)) {
+  $sql_where = " where s.body like :keyword";
 } else {
-  $sql_where = " where body like :keyword";
-  $keyword_param = '\'%' . $keyword . '%\'';
-  $stmt->bindParam(":keyword", $keyword_param);
+  $sql_where = "";
 }
 
+$sql_order = ' ORDER BY s.created_at DESC';
 
 // sqlの結合
-$sql = $sql . $sql_where;
+$sql = $sql . $sql_where . $sql_order;
 $stmt = $dbh->prepare($sql);
+
+// キーワード検索された場合
+if (isset($keyword)) {
+  $sql_where = " where body like :keyword";
+  $keyword_param = '\'%' . $keyword . '%\'';
+  $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_INT);
+}
 
 $stmt->execute();
 $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
