@@ -42,7 +42,7 @@ $stmt = $dbh->prepare($sql);
 
 // キーワード検索された場合
 if (isset($keyword)) {
-  $sql_where = " where body like :keyword";
+  $sql_where = " where s.body like :keyword";
   $keyword_param = '\'%' . $keyword . '%\'';
   $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_INT);
 }
