@@ -26,30 +26,27 @@ ON
   s.user_id = u.id
 SQL;
 
-// 条件付加
-
-if (isset($keyword)) {
+// 条件分岐
+if ($keyword != "") {
   $sql_where = " where s.body like :keyword";
 } else {
   $sql_where = "";
 }
 
-$sql_order = ' ORDER BY s.created_at DESC';
+$sql_order = " ORDER BY s.created_at DESC";
 
 // sqlの結合
 $sql = $sql . $sql_where . $sql_order;
 $stmt = $dbh->prepare($sql);
 
 // キーワード検索された場合
-if (isset($keyword)) {
-  $sql_where = " where s.body like :keyword";
-  $keyword_param = '\'%' . $keyword . '%\'';
-  $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_INT);
+if ($keyword != "") {
+  $keyword_param = '%' . $keyword . '%';
+  $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_STR);
 }
 
 $stmt->execute();
 $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  
 
 ?>
 
