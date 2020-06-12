@@ -94,10 +94,6 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <input type="text" name="keyword" placeholder="SEARCH">
         <input type="submit" class="btn btn-dark" value="検索">
       </form>
-      <!-- <form class="form-inline my-3">
-        <input class="form-control mr-sm-2" type="search" name="keyword" placeholder="SEARCH" aria-label="Search">
-        <button type="submit" class="btn btn-dark">検索</button>
-      </form> -->
     </div>
     <div class="container">
       <div class="row">
