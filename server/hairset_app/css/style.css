@@ -1,5 +1,12 @@
 @charset "utf-8";
 
+.flex-col-area {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
 .alert-danger {
   list-style: none;
 }
@@ -11,6 +18,11 @@ ul {
 ul.alert {
   color:  red;
 }
+
+.search {
+  text-align: right;
+}
+
 /* 新規記事投稿ボタン */
 .button {
   display       : inline-block;

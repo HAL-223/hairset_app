@@ -6,6 +6,9 @@ session_start();
 
 $dbh = connectDb();
 
+$keyword = $_GET['keyword'];
+
+// stylesの取得
 $sql = <<<SQL
 SELECT
   s.*,
@@ -21,18 +24,27 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
-ORDER BY
-  s.created_at desc
 SQL;
 
-// $sql_where = " where s.category_id = :category_id";
+// 条件分岐
+if ($keyword != "") {
+  $sql_where = " where s.body like :keyword";
+} else {
+  $sql_where = "";
+}
 
+$sql_order = " ORDER BY s.created_at DESC";
 
-// $sql_order = " order by s.created_at desc";
-// // SQL結合
-// $sql = $sql . $sql_where . $sql_order;
-
+// sqlの結合
+$sql = $sql . $sql_where . $sql_order;
 $stmt = $dbh->prepare($sql);
+
+// キーワード検索された場合
+if ($keyword != "") {
+  $keyword_param = '%' . $keyword . '%';
+  $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_STR);
+}
+
 $stmt->execute();
 $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -54,7 +66,7 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
   <div class="flex-col-area">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
       <a href="http://localhost/index.php" class="navbar-brand">Hair set style</a>
       <div class="collapse navbar-collapse" id="navbarToggle">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -76,16 +88,24 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </ul>
       </div>
     </nav>
+
+    <div class="search pr-3 my-3">
+      <form action="" method="get">
+        <input type="text" name="keyword" placeholder="SEARCH">
+        <input type="submit" class="btn btn-dark" value="検索">
+      </form>
+    </div>
     <div class="container">
       <div class="row">
         <div class="col-sm-10 col-md-10 col-lg-10 mx-auto">
           <div class="row">
             <?php foreach ($styles as $style) : ?>
-              <div class="col-md-5">
+              <div class="col-md-4">
                 <div class="article">
                   <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt=""></a>
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
+                  <p><?php echo h($style['body']); ?></p>
                 </div>
                 <hr>
               </div>

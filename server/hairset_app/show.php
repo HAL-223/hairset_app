@@ -32,7 +32,7 @@ $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 
 $style = $stmt->fetch(PDO::FETCH_ASSOC);
-if(empty($style)) {
+if (empty($style)) {
   header('Location: show.php');
   exit;
 }
@@ -79,17 +79,19 @@ if(empty($style)) {
       <div class="row">
         <div class="col-md-11 col-lg-9 mx-auto mt-5">
           <p>
-            <img src="<?php echo h('style_img/'.$style['picture']); ?>" alt="">
+            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
           </p>
           <p>Categories : <?php echo h($style['name']); ?></p>
-          <?php echo nl2br(h($style['body'])); ?>
+          <?php echo (h($style['body'])); ?>
           <br>
           <hr>
           <p>Posted date : <?php echo h($style['created_at']); ?></p>
+
           <?php if (($_SESSION['id']) && ($_SESSION['id'] == $style['user_id'])) : ?>
-            <a href="edit.php?id=<?php echo h($style['id']); ?>">編集</a>
+            <a href="edit.php?id=<?php echo h($style['id']); ?>" class="btn">編集</a>
+            <button type="button" class="btn " data-toggle="modal" data-target="#style-delete">削除</button>
           <?php endif; ?>
-          <a href="index.php">戻る</a>
+          <a href="index.php" class="btn">戻る</a>
         </div>
       </div>
       <br>
@@ -97,6 +99,29 @@ if(empty($style)) {
     <footer class="footer font-small bg-dark">
       <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
     </footer>
+  </div>
+  <div class="modal fade" id="style-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            「<?php echo h($style['body']) ?>」の投稿を削除しますか？
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" data-dismiss="modal">キャンセル</button>
+          <a href="delete.php?id=<?php echo h($style['id']) ?>" class="btn btn-warning">削除</a>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 
