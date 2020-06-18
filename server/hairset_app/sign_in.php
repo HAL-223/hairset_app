@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="password" class="form-control" required name="password">
               </div>
               <div class="form-group">
-                <input type="submit" value="ログイン" class="button-b">
+                <input type="submit" value="ログイン" class="login-button">
               </div>
               <a href="sign_up.php">アカウント登録</a>
           </div>

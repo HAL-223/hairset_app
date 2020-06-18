@@ -41,13 +41,13 @@ $stmt = $dbh->prepare($sql);
 
 // キーワード検索された場合
 if ($keyword != "") {
-  $keyword_param = '%' . $keyword . '%';
+  $keyword_param = "%" . $keyword . "%";
   $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_STR);
 }
 
 $stmt->execute();
 $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+echo $keyword_param;
 ?>
 
 <!DOCTYPE html>

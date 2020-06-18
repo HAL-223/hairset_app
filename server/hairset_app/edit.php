@@ -1,14 +1,33 @@
 <?php
+
 require_once('config.php');
 require_once('functions.php');
 
 session_start();
 
-$dbh = connectDb();
+$id = $_REQUEST['id'];
+if (!is_numeric($id)) {
+  header('Location: index.php');
+  exit;
+}
 
-$sql = 'select * from categories order by id';
+$dbh = connectDb();
+// データの取得
+$sql = 'SELECT * FROM styles WHERE id = :id';
+$stmt = $dbh->prepare($sql);
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->execute();
+$style = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (empty($style)) {
+  header('Location: index.php');
+  exit;
+}
+// カテゴリー取得
+$sql = 'SELECT * FROM categories ORDER BY id';
 $stmt = $dbh->prepare($sql);
 $stmt->execute();
+
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -30,48 +49,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
   }
 
+
   if (empty($errors)) {
     $picture = date('YmgHis') . $picture;
     move_uploaded_file($_FILES['picture']['tmp_name'], 'style_img/' . $picture);
     $_SESSION['join'] = $_POST;
     $_SESSION['join']['picture'] = $picture;
+  }
 
+  if (empty($errors)) {
     $sql = <<<SQL
-    insert into
-    styles
-    (
-      category_id,
-      user_id,
-      picture,
-      body
-    )
-    values
-    (
-      :category_id,
-      :user_id,
-      :picture,
-      :body
-    )
+    UPDATE
+      styles
+    SET
+      category_id = :category_id,
+      user_id = :user_id,
+      picture = :picture,
+      body = :body
+    WHERE
+      id = :id
     SQL;
-
     $stmt = $dbh->prepare($sql);
 
     $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
     $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
     $stmt->bindParam(':picture', $picture, PDO::PARAM_STR);
     $stmt->bindParam(':body', $body, PDO::PARAM_STR);
-
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    $id = $dbh->lastInsertId();
     header("Location: show.php?id={$id}");
     exit;
   }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="ja">
 
 <head>
   <meta charset="UTF-8">
@@ -108,12 +119,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </ul>
       </div>
     </nav>
+
     <div class="container">
       <div class="row">
         <div class="col-sm-11 col-md-9 col-lg-7 mx-auto">
           <div class="card my-5">
             <div class="card-body">
-              <h5 class="card-title text-center">New Post</h5>
+              <h5 class="card-title text-center">記事編集</h5>
               <?php if ($errors) : ?>
                 <ul class="alert alert-danger">
                   <?php foreach ($errors as $error) : ?>
@@ -121,8 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <?php endforeach; ?>
                 </ul>
               <?php endif; ?>
-              <form action="new.php" method="post" enctype="multipart/form-data">
-                <div class=" form-group">
+              <form action="edit.php" method="post" enctype="multipart/form-data">
+                <div class="form-group">
                   <input type="file" name="picture" id="">
                 </div>
                 <div class="form-group">
@@ -130,16 +142,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <select name="category_id" class="form-control" required>
                     <option value='' disabled selected>選択して下さい</option>
                     <?php foreach ($categories as $c) : ?>
-                      <option value="<?php echo h($c['id']); ?>"><?php echo h($c['name']); ?></option>
+                      <option value="<?php echo h($c['id']); ?>" <?php echo $style['category_id'] == $c['id'] ? "selected" : "" ?>>
+                        <?php echo h($c['name']); ?>
+                      </option>
                     <?php endforeach; ?>
                   </select>
                 </div>
                 <div class="form-group">
                   <label for="body">Text</label>
-                  <textarea name="body" id="" cols="30" rows="10" class="form-control"></textarea>
+                  <textarea name="body" id="" cols="30" rows="10" class="form-control"><?php echo $style['body'] ?></textarea>
                 </div>
                 <div class="form-group text-center">
-                  <input type="submit" value="Post" class="post-button">
+                  <input type="submit" value="Post" class="button">
                 </div>
               </form>
             </div>
@@ -147,10 +161,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
       </div>
     </div>
-    <footer class="footer font-small bg-dark">
-      <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
-    </footer>
-  </div>
-</body>
-
-</html>
