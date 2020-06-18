@@ -135,7 +135,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               <?php endif; ?>
               <form action="edit.php" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                  <input type="file" name="picture" id="">
+                  <!-- <input type=" file" name="picture" id=""> -->
+                  <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
                 </div>
                 <div class="form-group">
                   <label for="category_id">Category</label>
