@@ -33,7 +33,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $category_id = $_POST['category_id'];
   $user_id = $_SESSION['id'];
-  $image = $_FILES['picture']['name'];
+  $picture = $_FILES['picture']['name'];
   $body = $_POST['body'];
 
   $errors = [];
@@ -44,8 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   if ($picture) {
     $ext = substr($picture, -3);
-    if ($ext == 'jpg' || $ext == 'gif' || $ext == 'png') {
+    if ($ext != 'jpg' && $ext != 'gif' && $ext != 'png') {
       $errors[] = 'アップロード失敗';
+    } elseif (file_exists($picture)) {
+      $errors[] = "画像が選択されておりません";
     }
   }
 
@@ -133,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <?php endforeach; ?>
                 </ul>
               <?php endif; ?>
-              <form action="edit.php" method="post" enctype="multipart/form-data">
+              <form action="edit.php?id={$id}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                   <!-- <input type=" file" name="picture" id=""> -->
                   <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
@@ -154,9 +156,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <textarea name="body" id="" cols="30" rows="10" class="form-control"><?php echo $style['body'] ?></textarea>
                 </div>
                 <div class="form-group text-center">
-                  <input type="submit" value="Post" class="button">
+                  <input type="submit" value="Post" class="button btn page-link text-dark d-inline-block">
                 </div>
               </form>
+              <div class="back text-center">
+                <a href=" show.php?id=<?php echo h($style['id']); ?>" class="btn page-link text-dark d-inline-block">戻る</a>
+              </div>
             </div>
           </div>
         </div>

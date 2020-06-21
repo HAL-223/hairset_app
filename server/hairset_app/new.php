@@ -14,7 +14,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $category_id = $_POST['category_id'];
   $user_id = $_SESSION['id'];
-  $image = $_FILES['picture']['name'];
+  $picture = $_FILES['picture']['name'];
   $body = $_POST['body'];
 
   $errors = [];
@@ -25,10 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   if ($picture) {
     $ext = substr($picture, -3);
-    if ($ext == 'jpg' || $ext == 'gif' || $ext == 'png') {
+    if ($ext != 'jpg' && $ext != 'gif' && $ext != 'png') {
       $errors[] = 'アップロード失敗';
+    } elseif (file_exists($picture)) {
+      $errors[] = "画像が選択されておりません";
     }
   }
+
+// if (file_exists($picture)) {
+//   $errors[] = "画像が選択されておりません";
+// }
 
   if (empty($errors)) {
     $picture = date('YmgHis') . $picture;
