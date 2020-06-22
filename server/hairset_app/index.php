@@ -41,13 +41,13 @@ $stmt = $dbh->prepare($sql);
 
 // キーワード検索された場合
 if ($keyword != "") {
-  $keyword_param = '%' . $keyword . '%';
+  $keyword_param = "%" . $keyword . "%";
   $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_STR);
 }
 
 $stmt->execute();
 $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+echo $keyword_param;
 ?>
 
 <!DOCTYPE html>
@@ -102,7 +102,7 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php foreach ($styles as $style) : ?>
               <div class="col-md-4">
                 <div class="article">
-                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt=""></a>
+                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a>
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
                   <p><?php echo h($style['body']); ?></p>
