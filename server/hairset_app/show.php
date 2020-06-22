@@ -85,6 +85,11 @@ if (empty($style)) {
           <p>Categories : <?php echo h($style['name']); ?></p>
           <?php echo (h($style['body'])); ?>
           <br>
+          <?php if ($tweet['good'] == false) : ?>
+            <a href="good.php?id=<?php echo h($style['id']) . "&good=1"; ?>" class="bad-link"><?php echo '☆'; ?></a>
+          <?php else : ?>
+            <a href="good.php?id=<?php echo h($style['id']) . "&good=0"; ?>" class="good-link"><?php echo '★'; ?></a>
+          <?php endif; ?>
           <hr>
           <p>Posted date : <?php echo h($style['created_at']); ?></p>
 

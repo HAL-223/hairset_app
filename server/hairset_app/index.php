@@ -106,6 +106,11 @@ echo $keyword_param;
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
                   <p><?php echo h($style['body']); ?></p>
+                  <?php if ($style['good'] == false) : ?>
+                    <a href="good.php?id=<?php echo h($style['id']) . "&good=1"; ?>" class="bad-link"><?php echo '☆'; ?></a>
+                  <?php else : ?>
+                    <a href="good.php?id=<?php echo h($style['id']) . "&good=0"; ?>" class="good-link"><?php echo '★'; ?></a>
+                  <?php endif; ?>
                 </div>
                 <hr>
               </div>
