@@ -102,7 +102,7 @@ echo $keyword_param;
             <?php foreach ($styles as $style) : ?>
               <div class="col-md-4">
                 <div class="article">
-                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt=""></a>
+                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a>
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
                   <p><?php echo h($style['body']); ?></p>

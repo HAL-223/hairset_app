@@ -23,13 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors[] = 'カテゴリーが未選択です';
   }
 
+  var_dump(file_exists($picture));
   if ($picture) {
     $ext = substr($picture, -3);
     if ($ext != 'jpg' && $ext != 'gif' && $ext != 'png') {
       $errors[] = 'アップロード失敗';
-    } elseif (file_exists($picture)) {
-      $errors[] = "画像が選択されておりません";
-    }
+    } 
+  } elseif (file_exists($picture) == false) {
+    $errors[] = "画像が選択されておりません";
   }
 
 // if (file_exists($picture)) {

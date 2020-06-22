@@ -33,7 +33,12 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $category_id = $_POST['category_id'];
   $user_id = $_SESSION['id'];
-  $picture = $_FILES['picture']['name'];
+  if ($_FILES['picture']['name']) {
+    $picture = $_FILES['picture']['name'];
+  } else {
+    $picture = $style['picture'];
+  }
+  
   $body = $_POST['body'];
 
   $errors = [];
@@ -46,13 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ext = substr($picture, -3);
     if ($ext != 'jpg' && $ext != 'gif' && $ext != 'png') {
       $errors[] = 'アップロード失敗';
-    } elseif (file_exists($picture)) {
-      $errors[] = "画像が選択されておりません";
     }
   }
 
 
-  if (empty($errors)) {
+  if (empty($errors) && ($picture != $style['picture'])) {
     $picture = date('YmgHis') . $picture;
     move_uploaded_file($_FILES['picture']['tmp_name'], 'style_img/' . $picture);
     $_SESSION['join'] = $_POST;
@@ -135,10 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <?php endforeach; ?>
                 </ul>
               <?php endif; ?>
-              <form action="edit.php?id={$id}" method="post" enctype="multipart/form-data">
+              <form action="edit.php" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                   <!-- <input type=" file" name="picture" id=""> -->
                   <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
+                </div>
+                <div class=" form-group">
+                  <input type="file" name="picture" id="" value="<?php echo h($style['picture']); ?>">
                 </div>
                 <div class="form-group">
                   <label for="category_id">Category</label>
@@ -155,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                   <label for="body">Text</label>
                   <textarea name="body" id="" cols="30" rows="10" class="form-control"><?php echo $style['body'] ?></textarea>
                 </div>
+                <input type="hidden" name="id" value="<?= $id ?>">
                 <div class="form-group text-center">
                   <input type="submit" value="Post" class="button btn page-link text-dark d-inline-block">
                 </div>
