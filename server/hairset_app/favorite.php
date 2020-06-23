@@ -4,14 +4,13 @@ require_once('functions.php');
 
 session_start();
 
+$id = $_GET['id'];
+$user_id = $_GET['user_id'];
+$style_id  = $_GET['style_id'];
+
 $dbh = connectDb();
 
-$keyword = $_GET['keyword'];
-
-// stylesの取得
-if ($_SESSION['id']) {
-
-  $sql = <<<SQL
+$sql = <<<SQL
 SELECT
   s.*,
   c.name,
@@ -33,51 +32,25 @@ ON
   s.id = g.style_id
 AND
   g.user_id = :user_id
+WHERE
+  s.id = :id
+  
 SQL;
-} else {
-  $sql = <<<SQL
-SELECT
-  s.*,
-  c.name,
-  u.name as user_name
-FROM
-  styles s
-LEFT JOIN
-  categories c
-ON
-  s.category_id = c.id
-LEFT JOIN
-  users u
-ON 
-  s.user_id = u.id
-SQL;
-}
 
-// 条件分岐
-if ($keyword != "") {
-  $sql_where = " where s.body like :keyword";
-} else {
-  $sql_where = "";
-}
-
-$sql_order = " ORDER BY s.created_at DESC";
-
-// sqlの結合
-$sql = $sql . $sql_where . $sql_order;
 $stmt = $dbh->prepare($sql);
-
-// キーワード検索された場合
-if ($keyword != "") {
-  $keyword_param = "%" . $keyword . "%";
-  $stmt->bindParam(":keyword", $keyword_param, PDO::PARAM_STR);
-}
-
-if ($_SESSION['id']) {
-  $stmt->bindParam(":user_id", $_SESSION['id'], PDO::PARAM_INT);
-}
-
+$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
-$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$style = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// if ($style['good'] = 0) {
+//   return $styles;
+// }
+
+//   $stmt = $dbh->prepare($sql);
+//   $stmt->bindParam(":good", $good, PDO::PARAM_INT);
+//   $stmt->execute();
+//   $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -107,9 +80,6 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <li class="nav-item">
               <a href="new.php" class="nav-link">New Post</a>
             </li>
-            <li class="nav-item">
-              <a href="favorite.php" class="nav-link">+</a>
-            </li>
           <?php else : ?>
             <li class="nav-item">
               <a href="sign_in.php" class="nav-link">ログイン</a>
@@ -122,12 +92,6 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
       </div>
     </nav>
 
-    <div class="search pr-3 my-3">
-      <form action="" method="get">
-        <input type="text" name="keyword" placeholder="SEARCH">
-        <input type="submit" class="btn btn-dark" value="検索">
-      </form>
-    </div>
     <div class="container">
       <div class="row">
         <div class="col-sm-10 col-md-10 col-lg-10 mx-auto">
@@ -139,13 +103,6 @@ $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
                   <p><?php echo h($style['body']); ?></p>
-                  <?php if ($_SESSION['id']) : ?>
-                    <?php if ($style['good_id']) : ?>
-                      <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link">♥</a>
-                    <?php else : ?>
-                      <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link">♡</a>
-                    <?php endif; ?>
-                  <?php endif; ?>
                 </div>
                 <hr>
               </div>

@@ -73,3 +73,39 @@ ul.alert {
 .login-button:hover:before {
   background-size: 13px 10px;
 }
+/* イイネ */
+.btn-bad-link {
+  display: inline-block;
+  text-decoration: none;
+  background:#fd87ed;
+  color: #FFF;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  overflow: hidden;
+  transition: .4s;
+}
+
+.btn-circle-flat:hover {
+  background:#d8669f;
+}
+
+.btn-good-link {
+  display: inline-block;
+  text-decoration: none;
+  background:#fd87ed;
+  color: #FFF;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 50%;
+  text-align: center;
+  overflow: hidden;
+  transition: .4s;
+}
+
+.btn-circle-flat:hover {
+  background:#d8669f;
+}

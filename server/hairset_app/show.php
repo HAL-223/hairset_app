@@ -13,21 +13,60 @@ if (!is_numeric($id)) {
 
 $dbh = connectDb();
 
-$sql = <<<SQL
-select
+if ($_SESSION['id']) {
+
+  $sql = <<<SQL
+SELECT
   s.*,
-  c.name
-from
+  c.name,
+  u.name as user_name,
+  g.id as good_id
+FROM
   styles s
-left join
+LEFT JOIN
   categories c
-on
+ON
   s.category_id = c.id
-where
+LEFT JOIN
+  users u
+ON 
+  s.user_id = u.id
+LEFT JOIN
+  good g
+ON 
+  s.id = g.style_id
+AND
+  g.user_id = :user_id
+WHERE
   s.id = :id
 SQL;
+} else {
+  $sql = <<<SQL
+SELECT
+  s.*,
+  c.name,
+  u.name as user_name
+FROM
+  styles s
+LEFT JOIN
+  categories c
+ON
+  s.category_id = c.id
+LEFT JOIN
+  users u
+ON 
+  s.user_id = u.id
+WHERE
+  s.id = :id
+SQL;
+}
 
 $stmt = $dbh->prepare($sql);
+
+if ($_SESSION['id']) {
+  $stmt->bindParam(":user_id", $_SESSION['id'], PDO::PARAM_INT);
+}
+
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 
@@ -64,6 +103,9 @@ if (empty($style)) {
             <li class="nav-item">
               <a href="new.php" class="nav-link">New Post</a>
             </li>
+            <li class="nav-item">
+              <a href="favorite.php" class="nav-link">+</a>
+            </li>
           <?php else : ?>
             <li class="nav-item">
               <a href="sign_in.php" class="nav-link">ログイン</a>
@@ -84,11 +126,12 @@ if (empty($style)) {
           </p>
           <p>Categories : <?php echo h($style['name']); ?></p>
           <?php echo (h($style['body'])); ?>
-          <br>
-          <?php if ($tweet['good'] == false) : ?>
-            <a href="good.php?id=<?php echo h($style['id']) . "&good=1"; ?>" class="bad-link"><?php echo '☆'; ?></a>
-          <?php else : ?>
-            <a href="good.php?id=<?php echo h($style['id']) . "&good=0"; ?>" class="good-link"><?php echo '★'; ?></a>
+          <?php if ($_SESSION['id']) : ?>
+            <?php if ($style['good_id']) : ?>
+              <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link">♥</a>
+            <?php else : ?>
+              <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link">♡</a>
+            <?php endif; ?>
           <?php endif; ?>
           <hr>
           <p>Posted date : <?php echo h($style['created_at']); ?></p>
