@@ -15,9 +15,10 @@ SELECT
   s.*,
   c.name,
   u.name as user_name,
+  g.user_id,
   g.id as good_id
 FROM
-  styles s
+  good g
 LEFT JOIN
   categories c
 ON
@@ -34,11 +35,11 @@ AND
   g.user_id = :user_id
 WHERE
   s.id = :id
-  
 SQL;
 
 $stmt = $dbh->prepare($sql);
 $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 
 $style = $stmt->fetch(PDO::FETCH_ASSOC);

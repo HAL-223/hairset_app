@@ -6,6 +6,25 @@
   min-height: 100vh;
 }
 
+.container {
+  display: flex;
+  margin: 0;
+}
+/* .container-c {
+  display: flex;
+  margin: 0;
+} */
+
+
+.blog-heading {
+  padding-bottom: 15px;
+  padding-left: 0;
+  color: #6e95cf;
+  font-size: 16px;
+  border-bottom: solid 3px #f0f0f0;
+  font-weight: 700;
+}
+
 
 .alert-danger {
   list-style: none;
@@ -109,3 +128,4 @@ ul.alert {
 .btn-circle-flat:hover {
   background:#d8669f;
 }
+
