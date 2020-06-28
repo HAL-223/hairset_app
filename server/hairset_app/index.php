@@ -52,6 +52,8 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
+WHERE
+  g.user_id = id
 SQL;
 }
 
