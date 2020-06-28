@@ -22,20 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   if ($category_id == '') {
     $errors[] = 'カテゴリーが未選択です';
   }
-
-  var_dump(file_exists($picture));
+  
   if ($picture) {
     $ext = substr($picture, -3);
     if ($ext != 'jpg' && $ext != 'gif' && $ext != 'png') {
       $errors[] = 'アップロード失敗';
-    } 
+    }
   } elseif (file_exists($picture) == false) {
     $errors[] = "画像が選択されておりません";
   }
 
-// if (file_exists($picture)) {
-//   $errors[] = "画像が選択されておりません";
-// }
 
   if (empty($errors)) {
     $picture = date('YmgHis') . $picture;
@@ -98,18 +94,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <div class="collapse navbar-collapse" id="navbarToggle">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
           <?php if ($_SESSION['id']) : ?>
+            <!-- ログアウト -->
             <li class="nav-item">
-              <a href="sign_out.php" class="nav-link">ログアウト</a>
+              <a href="sign_out.php" class="nav-link"><i class="fas fa-sign-out-alt fa-lg"></i></a>
             </li>
+            <!-- NewPost -->
             <li class="nav-item">
-              <a href="new.php" class="nav-link">New Post</a>
+              <a href="new.php" class="nav-link"><i class="fas fa-camera-retro fa-lg"></i></a>
+            </li>
+            <!-- お気に入り -->
+            <li class="nav-item">
+              <a href="favorite.php" class="nav-link"><i class="far fa-images fa-lg"></i></a>
             </li>
           <?php else : ?>
+            <!-- サインイン -->
             <li class="nav-item">
-              <a href="sign_in.php" class="nav-link">ログイン</a>
+              <a href="sign_in.php" class="nav-link"><i class="fas fa-sign-in-alt fa-lg"></i></a>
             </li>
+            <!-- アカウント登録 -->
             <li class="nav-item">
-              <a href="sign_up.php" class="nav-link">アカウント登録</a>
+              <a href="sign_up.php" class="nav-link"><i class="fas fa-user-plus fa-lg"></i></a>
             </li>
           <?php endif; ?>
         </ul>

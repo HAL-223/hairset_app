@@ -18,14 +18,10 @@ SELECT
   g.user_id,
   g.id as good_id
 FROM
-  good g
-LEFT JOIN
-  categories c
-ON
-  s.category_id = c.id
+  styles s
 LEFT JOIN
   users u
-ON 
+ON
   s.user_id = u.id
 LEFT JOIN
   good g
@@ -34,7 +30,7 @@ ON
 AND
   g.user_id = :user_id
 WHERE
-  s.id = :id
+  user_id = :id
 SQL;
 
 $stmt = $dbh->prepare($sql);
@@ -75,18 +71,26 @@ $style = $stmt->fetch(PDO::FETCH_ASSOC);
       <div class="collapse navbar-collapse" id="navbarToggle">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
           <?php if ($_SESSION['id']) : ?>
+            <!-- ログアウト -->
             <li class="nav-item">
-              <a href="sign_out.php" class="nav-link">ログアウト</a>
+              <a href="sign_out.php" class="nav-link"><i class="fas fa-sign-out-alt fa-lg"></i></a>
             </li>
+            <!-- NewPost -->
             <li class="nav-item">
-              <a href="new.php" class="nav-link">New Post</a>
+              <a href="new.php" class="nav-link"><i class="fas fa-camera-retro fa-lg"></i></a>
+            </li>
+            <!-- お気に入り -->
+            <li class="nav-item">
+              <a href="favorite.php" class="nav-link"><i class="far fa-images fa-lg"></i></a>
             </li>
           <?php else : ?>
+            <!-- サインイン -->
             <li class="nav-item">
-              <a href="sign_in.php" class="nav-link">ログイン</a>
+              <a href="sign_in.php" class="nav-link"><i class="fas fa-sign-in-alt fa-lg"></i></a>
             </li>
+            <!-- アカウント登録 -->
             <li class="nav-item">
-              <a href="sign_up.php" class="nav-link">アカウント登録</a>
+              <a href="sign_up.php" class="nav-link"><i class="fas fa-user-plus fa-lg"></i></a>
             </li>
           <?php endif; ?>
         </ul>
@@ -104,6 +108,13 @@ $style = $stmt->fetch(PDO::FETCH_ASSOC);
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
                   <p><?php echo h($style['body']); ?></p>
+                  <?php if ($_SESSION['id']) : ?>
+                    <?php if ($style['good_id']) : ?>
+                      <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
+                    <?php else : ?>
+                      <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+                    <?php endif; ?>
+                  <?php endif; ?>
                 </div>
                 <hr>
               </div>

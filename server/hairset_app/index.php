@@ -64,8 +64,7 @@ if ($keyword != "") {
 
 // カテゴリーidの条件付加
 if (($category_id) &&
-  is_numeric($category_id)
-) {
+  is_numeric($category_id)) {
   $sql_where = ' WHERE s.category_id = :category_id';
 } else {
   $sql_where = "";
@@ -89,8 +88,7 @@ if ($_SESSION['id']) {
 
 // カテゴリーが指定されていた場合
 if (($category_id) &&
-  is_numeric($category_id)
-) {
+  is_numeric($category_id)) {
   $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
 }
 
@@ -125,21 +123,26 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="collapse navbar-collapse" id="navbarToggle">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
           <?php if ($_SESSION['id']) : ?>
+            <!-- ログアウト -->
             <li class="nav-item">
-              <a href="sign_out.php" class="nav-link">ログアウト</a>
+              <a href="sign_out.php" class="nav-link"><i class="fas fa-sign-out-alt fa-lg"></i></a>
             </li>
+            <!-- NewPost -->
             <li class="nav-item">
-              <a href="new.php" class="nav-link">New Post</a>
+              <a href="new.php" class="nav-link"><i class="fas fa-camera-retro fa-lg"></i></a>
             </li>
+            <!-- お気に入り -->
             <li class="nav-item">
-              <a href="favorite.php" class="nav-link"><i class="far fa-images"></i></a>
+              <a href="favorite.php" class="nav-link"><i class="far fa-images fa-lg"></i></a>
             </li>
           <?php else : ?>
+            <!-- サインイン -->
             <li class="nav-item">
-              <a href="sign_in.php" class="nav-link">ログイン</a>
+              <a href="sign_in.php" class="nav-link"><i class="fas fa-sign-in-alt fa-lg"></i></a>
             </li>
+            <!-- アカウント登録 -->
             <li class="nav-item">
-              <a href="sign_up.php" class="nav-link">アカウント登録</a>
+              <a href="sign_up.php" class="nav-link"><i class="fas fa-user-plus fa-lg"></i></a>
             </li>
           <?php endif; ?>
         </ul>
@@ -155,7 +158,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container">
       <div class="row">
         <!-- <div class="col-sm-10 col-md-10 col-lg-10 mx-auto"> -->
-        <div class="col-md-4 d-none d-md-block">
+        <div class="col-md-3 d-none d-md-block">
           <div class="card">
             <div class="card-header">
               <h2 class="blog-heading">スタイルから探す</h2>
@@ -171,15 +174,15 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </ul>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-9">
           <div class="row">
             <?php foreach ($styles as $style) : ?>
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <div class="article">
                   <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a>
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
-                  <p><?php echo h($style['body']); ?></p>
+                  <p><?php echo nl2br(h($style['body'])); ?></p>
                   <?php if ($_SESSION['id']) : ?>
                     <?php if ($style['good_id']) : ?>
                       <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
