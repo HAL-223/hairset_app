@@ -5,7 +5,7 @@ require_once('functions.php');
 session_start();
 
 $id = $_GET['id'];
-$user_id = $_GET['user_id'];
+$user_id = $_SESSION['id'];
 $style_id  = $_GET['style_id'];
 
 $dbh = connectDb();
@@ -13,7 +13,6 @@ $dbh = connectDb();
 $sql = <<<SQL
 SELECT
   s.*,
-  c.name,
   u.name as user_name,
   g.user_id,
   g.id as good_id
@@ -23,22 +22,23 @@ LEFT JOIN
   users u
 ON
   s.user_id = u.id
-LEFT JOIN
+INNER JOIN
   good g
 ON 
   s.id = g.style_id
 AND
   g.user_id = :user_id
-WHERE
-  user_id = :id
 SQL;
 
+$good = 'select count(good) > 0 from styles';
+
 $stmt = $dbh->prepare($sql);
-$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 $stmt->execute();
 
-$style = $stmt->fetch(PDO::FETCH_ASSOC);
+$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 // if ($style['good'] = 0) {
 //   return $styles;
@@ -61,6 +61,7 @@ $style = $stmt->fetch(PDO::FETCH_ASSOC);
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/f8d88e43cf.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -104,17 +105,17 @@ $style = $stmt->fetch(PDO::FETCH_ASSOC);
             <?php foreach ($styles as $style) : ?>
               <div class="col-md-4">
                 <div class="article">
-                  <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a>
-                  <p>☆:<?php echo h($style['user_name']); ?></p>
-                  <p>投稿日:<?php echo h($style['created_at']); ?></p>
-                  <p><?php echo h($style['body']); ?></p>
-                  <?php if ($_SESSION['id']) : ?>
-                    <?php if ($style['good_id']) : ?>
-                      <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
-                    <?php else : ?>
-                      <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+                  <a href="show.php?id=<?php echo h($style['id']) ?>"><a class="thumbnail" href="image1.jpg" target="_blank"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a></a>
+                    <p>☆:<?php echo h($style['user_name']); ?></p>
+                    <p>投稿日:<?php echo h($style['created_at']); ?></p>
+                    <p><?php echo h($style['body']); ?></p>
+                    <?php if ($_SESSION['id']) : ?>
+                      <?php if ($style['good_id']) : ?>
+                        <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
+                      <?php else : ?>
+                        <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+                      <?php endif; ?>
                     <?php endif; ?>
-                  <?php endif; ?>
                 </div>
                 <hr>
               </div>

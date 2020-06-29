@@ -52,24 +52,17 @@ LEFT JOIN
   users u
 ON 
   s.user_id = u.id
-WHERE
-  g.user_id = id
 SQL;
 }
 
 // 条件分岐
 if ($keyword != "") {
   $sql_where = " where s.body like :keyword";
-} else {
-  $sql_where = "";
 }
 
 // カテゴリーidの条件付加
-if (($category_id) &&
-  is_numeric($category_id)) {
+if (($category_id) && is_numeric($category_id)) {
   $sql_where = ' WHERE s.category_id = :category_id';
-} else {
-  $sql_where = "";
 }
 
 $sql_order = " ORDER BY s.created_at DESC";
@@ -90,7 +83,8 @@ if ($_SESSION['id']) {
 
 // カテゴリーが指定されていた場合
 if (($category_id) &&
-  is_numeric($category_id)) {
+  is_numeric($category_id)
+) {
   $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
 }
 
@@ -112,7 +106,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <title>HAIR SET STYLES</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/um/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/f8d88e43cf.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="css/style.css">
@@ -184,7 +178,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <a href="show.php?id=<?php echo h($style['id']) ?>"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a>
                   <p>☆:<?php echo h($style['user_name']); ?></p>
                   <p>投稿日:<?php echo h($style['created_at']); ?></p>
-                  <p><?php echo nl2br(h($style['body'])); ?></p>
+                  <p class="style_body"><?= nl2br(h(mb_strimwidth($style['body'], 0, 50, "..."))) ?></p>
                   <?php if ($_SESSION['id']) : ?>
                     <?php if ($style['good_id']) : ?>
                       <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>

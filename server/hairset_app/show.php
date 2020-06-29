@@ -129,17 +129,22 @@ if (empty($style)) {
       <div class="row">
         <div class="col-md-11 col-lg-9 mx-auto mt-5">
           <p>
-            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
+            <a href="show.php?id=<?php echo h($style['id']) ?>" class="thumbnail">
+              <img class="img-size" src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail">
+            </a>
           </p>
           <p>Categories : <?php echo h($style['name']); ?></p>
-          <?php echo (h($style['body'])); ?>
-          <?php if ($_SESSION['id']) : ?>
-            <?php if ($style['good_id']) : ?>
-              <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
-            <?php else : ?>
-              <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+          <p><?php echo (h($style['body'])); ?></p>
+          <!-- <div class="goodbtn"> -->
+            <?php if ($_SESSION['id']) : ?>
+              <?php if ($style['good_id']) : ?>
+                <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
+              <?php else : ?>
+                <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+              <?php endif; ?>
             <?php endif; ?>
-          <?php endif; ?>
+            
+          <!-- </div> -->
           <hr>
           <p>Posted date : <?php echo h($style['created_at']); ?></p>
 
@@ -172,7 +177,7 @@ if (empty($style)) {
         </div>
         <div class="modal-body">
           <p>
-            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
+            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="thumbnail">
           </p>
         </div>
         <div class="modal-footer">
@@ -196,7 +201,7 @@ if (empty($style)) {
         </div>
         <div class="modal-body">
           <p>
-            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="">
+            <img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="thumbnail">
           </p>
         </div>
         <div class="modal-footer">

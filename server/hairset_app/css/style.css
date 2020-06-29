@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 .flex-col-area {
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   min-height: 100vh;
   justify-content: space-between;
@@ -112,6 +112,15 @@ ul.alert {
 .login-button:hover:before {
   background-size: 13px 10px;
 }
+
+div.card_login {
+  background: url(../style_img/images.jpeg) center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color:rgba(255,255,255,0.8);
+  background-blend-mode:lighten;
+}
+
 /* イイネ */
 .btn-bad-link {
   display: inline-block;
@@ -158,3 +167,36 @@ ul.alert {
   line-height: 50px;
 } 
 
+/* .goodbtn {
+  float: right;
+} */
+
+.thumbnail {
+    display: inline-block; /* ここがポイント */
+    height: 400px;
+}
+.thumbnail img {
+    height: 100%;
+}
+
+/* .article {
+  min-height: 500px;
+} */
+
+.style_body {
+  height: 50px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+/* Bootstrap上書き */
+.img-thumbnail {
+  height: 300px;
+}
+
+.modal-body {
+  text-align: center;
+}
+
+/* .img-size {
+  width: 300px;
+} */

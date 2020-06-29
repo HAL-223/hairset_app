@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt->bindParam(":style_id", $style_id);
   }
   
-  
   $stmt->execute();
 
   $url = $_SERVER['HTTP_REFERER'];
