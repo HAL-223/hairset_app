@@ -1,45 +1,53 @@
 <?php
-
 require_once('config.php');
 require_once('functions.php');
 
 session_start();
+
+$id = $_GET['id'];
+$user_id = $_SESSION['id'];
+$style_id  = $_GET['style_id'];
+
 $dbh = connectDb();
 
+$sql = <<<SQL
+SELECT
+  s.*,
+  u.name as user_name,
+  g.user_id,
+  g.id as good_id
+FROM
+  styles s
+LEFT JOIN
+  users u
+ON
+  s.user_id = u.id
+INNER JOIN
+  good g
+ON 
+  s.id = g.style_id
+AND
+  g.user_id = :user_id
+SQL;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+$good = 'select count(good) > 0 from styles';
 
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $errors = [];
+$stmt = $dbh->prepare($sql);
+$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+$stmt->execute();
 
-  if ($email == '') {
-    $errors[] = 'emailが未入力です';
-  }
+$styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  if ($password == '') {
-    $errors[] = 'passwordが未入力です';
-  }
 
-  if (empty($errors)) {
-    $sql = 'select * from users where email = :email';
-    $stmt = $dbh->prepare($sql);
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->execute();
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+// if ($style['good'] = 0) {
+//   return $styles;
+// }
 
-    if (password_verify($password, $user['password'])) {
-      $_SESSION['id'] = $user['id'];
-      if ($_SESSION['id']) {
-        header('Location: index.php');
-        exit;
-      }
-    } else {
-      $errors[] = 'メールアドレスパスワードが間違っています';
-    }
-  }
-}
+//   $stmt = $dbh->prepare($sql);
+//   $stmt->bindParam(":good", $good, PDO::PARAM_INT);
+//   $stmt->execute();
+//   $styles = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -48,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ログイン画面</title>
+  <title>HAIR SET STYLES</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -59,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body>
   <div class="flex-col-area">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
       <a href="http://localhost/index.php" class="navbar-brand">Hair set style</a>
       <div class="collapse navbar-collapse" id="navbarToggle">
         <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
@@ -89,37 +97,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </ul>
       </div>
     </nav>
-    <div class="row">
-      <div class="col-sm-6 offset-sm-3">
-        <div class="card card_login">
-          <div class="card-body">
-            <h5>ログイン</h5>
-            <?php if ($errors) : ?>
-              <ul class="alert">
-                <?php foreach ($errors as $error) : ?>
-                  <li><?php echo $error; ?></li>
-                <?php endforeach; ?>
-              </ul>
-            <?php endif; ?>
-            <form class="" action="sign_in.php" method="post">
-              <div class="form-group">
-                <label for="email">メールアドレス</label>
-                <input type="email" class="form-control" required autofocus name="email">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10 col-md-10 col-lg-10 mx-auto">
+          <div class="row">
+            <?php foreach ($styles as $style) : ?>
+              <div class="col-md-4">
+                <div class="article">
+                  <a href="show.php?id=<?php echo h($style['id']) ?>"><a class="thumbnail" href="image1.jpg" target="_blank"><img src="<?php echo h('style_img/' . $style['picture']); ?>" alt="" class="img-fluid img-thumbnail"></a></a>
+                    <p>☆:<?php echo h($style['user_name']); ?></p>
+                    <p>投稿日:<?php echo h($style['created_at']); ?></p>
+                    <p><?php echo h($style['body']); ?></p>
+                    <?php if ($_SESSION['id']) : ?>
+                      <?php if ($style['good_id']) : ?>
+                        <a href="good.php?id=<?php echo h($style['good_id']); ?>" class="btn-bad-link"><i class="fas fa-thumbs-up"></i></a>
+                      <?php else : ?>
+                        <a href="good.php?style_id=<?php echo h($style['id']) . "&user_id=" . $_SESSION['id']; ?>" class="btn-good-link"><i class="far fa-thumbs-up"></i></a>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+                <hr>
               </div>
-              <div class="form-group">
-                <label for="password">パスワード</label>
-                <input type="password" class="form-control" required name="password">
-              </div>
-              <div class="form-group">
-                <input type="submit" value="ログイン" class="login-button">
-              </div>
-              <a href="sign_up.php">アカウント登録</a>
+            <?php endforeach; ?>
           </div>
         </div>
       </div>
     </div>
-    </form>
 
+    <footer class="footer font-small bg-dark">
+      <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
+    </footer>
+  </div>
 </body>
 
 </html>
