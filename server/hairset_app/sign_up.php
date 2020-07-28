@@ -106,8 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
       </div>
     </div>
-    <footer class="footer font-small bg-transparent">
-      <div class="footer-copyright text-center py-5 text-dark">&copy; HAL hair</div>
+    <footer class="footer font-small bg-dark">
+      <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
     </footer>
   </div>
 </body>
