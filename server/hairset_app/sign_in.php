@@ -114,12 +114,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="submit" value="ログイン" class="login-button">
               </div>
               <a href="sign_up.php">アカウント登録</a>
+            </form>
           </div>
         </div>
       </div>
     </div>
-    </form>
+  </div>
 
+    <footer class="footer font-small bg-dark">
+      <div class="footer-copyright text-center py-3 text-light">&copy; HAL hair</div>
+    </footer>
 </body>
 
 </html>
